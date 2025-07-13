@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dreean Beats - Egyedi mínőségi MP3 dalok</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f9fafb;
+      color: #222;
+      margin: 20px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      font-weight: 600;
+      font-size: 2rem;
+      margin-bottom: 25px;
+      color: #0070f3;
+      letter-spacing: 1px;
+    }
+
+    #searchInput {
+      display: block;
+      margin: 0 auto 25px auto;
+      width: 90%;
+      max-width: 420px;
+      padding: 12px 18px;
+      font-size: 1.15rem;
+      border-radius: 8px;
+      border: 2px solid #0070f3;
+      outline: none;
+      box-sizing: border-box;
+      background: white;
+      color: #222;
+
+      box-shadow: 0 0 8px 0 #0070f3aa;
+      animation: pulseGlow 2.5s ease-in-out infinite;
+      transition: box-shadow 0.3s ease;
+    }
+
+    #searchInput:focus {
+      animation-duration: 1.5s;
+      box-shadow: 0 0 22px 6px #005bb5cc;
+      border-color: #005bb5;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% {
+        box-shadow: 0 0 8px 0 #0070f3aa;
+        border-color: #0070f3;
+      }
+      50% {
+        box-shadow: 0 0 20px 6px #0070f3cc;
+        border-color: #005bb5;
+      }
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 8px;
+      box-shadow: 0 3px 12px rgb(0 0 0 / 0.05);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    thead tr {
+      background: linear-gradient(90deg, #0070f3, #005bb5);
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    thead th {
+      padding: 14px 16px;
+      text-align: left;
+    }
+
+    tbody tr {
+      background: white;
+      box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      cursor: default;
+      border-radius: 8px;
+    }
+
+    tbody tr:hover {
+      background-color: #e9f0ff;
+      box-shadow: 0 4px 14px rgb(0 112 243 / 0.25);
+    }
+
+    td {
+      padding: 12px 16px;
+      vertical-align: middle;
+      font-size: 0.95rem;
+      color: #333;
+    }
+
+    td.align-left {
+      text-align: left;
+    }
+
+    .demo-cell iframe,
+    .demo-cell audio {
+      border-radius: 10px;
+      border: none;
+      width: 100%;
+      max-width: 400px;
+      height: 150px;
+      display: block;
+      box-shadow: 0 2px 10px rgb(0 0 0 / 0.1);
+    }
+
+    .highlight {
+      background-color: #d6f5d6;
+      box-shadow: 0 0 8px 2px #4caf5080;
+      font-weight: 600;
+      border-radius: 3px;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Mobilbarát táblázat: blokkszintű, adatok megjelenítése címkékkel */
+    @media (max-width: 600px) {
+      table,
+      thead,
+      tbody,
+      th,
+      td,
+      tr {
+        display: block;
+      }
+      thead tr {
+        display: none;
+      }
+      tbody tr {
+        margin-bottom: 15px;
+        box-shadow: none;
+        background: #f3f7ff;
+        border-radius: 10px;
+        padding: 12px;
+      }
+      tbody td {
+        padding-left: 50%;
+        position: relative;
+        text-align: right;
+        font-size: 0.9rem;
+      }
+      tbody td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 16px;
+        width: 45%;
+        padding-left: 5px;
+        font-weight: 600;
+        text-align: left;
+        color: #0070f3;
+      }
+      .demo-cell iframe,
+      .demo-cell audio {
+        max-width: 100%;
+        height: 120px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Dreean Beats - Egyedi mínőségi MP3 dalok</h1>
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="Keresés..."
+    autocomplete="off"
+  />
+
+  <table>
+    <thead>
+      <tr>
+        <th class="align-left">Cím</th>
+        <th>Demo</th>
+        <th>Hossz</th>
+        <th>BPM</th>
+        <th>Key</th>
+        <th>Műfaj</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <script>
+    const tableBody = document.getElementById('tableBody');
+    const searchInput = document.getElementById('searchInput');
+    let data = [];
+
+    fetch('data.json')
+      .then((response) => response.json())
+      .then((json) => {
+        data = json;
+        renderTable(data);
+      })
+      .catch((err) => {
+        console.error('Nem sikerült betölteni:', err);
+        tableBody.innerHTML =
+          '<tr><td colspan="6" style="text-align:center;color:red;">Nem sikerült betölteni az adatokat.</td></tr>';
+      });
+
+    function renderTable(items) {
+      tableBody.innerHTML = '';
+      items.forEach((item) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="align-left" data-label="Cím"><span class="cell-text">${escapeHtml(
+            item.title
+          )}</span></td>
+          <td class="demo-cell" data-label="Demo">${renderDemo(item.demo)}</td>
+          <td data-label="Hossz"><span class="cell-text">${escapeHtml(item.length)}</span></td>
+          <td data-label="BPM"><span class="cell-text">${escapeHtml(item.bpm)}</span></td>
+          <td data-label="Key"><span class="cell-text">${escapeHtml(item.key)}</span></td>
+          <td data-label="Műfaj"><span class="cell-text">${escapeHtml(item.genre)}</span></td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    }
+
+    function renderDemo(demo) {
+      if (!demo) return '';
+      const d = demo.trim();
+      if (d.startsWith('<iframe') || d.startsWith('<embed')) return d;
+      if (d.match(/^https?:\/\/hearthis\.at\//i)) {
+        return `<iframe scrolling="no" style="border-radius:10px; border:none;" width="100%" height="150" src="${escapeHtmlAttr(
+          d
+        )}" frameborder="0" allowtransparency allow="autoplay"></iframe>`;
+      }
+      if (d.match(/^https?:\/\/(soundcloud\.com|snd\.sc)\//i)) {
+        const encoded = encodeURIComponent(d);
+        return `<iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=${encoded}&color=%23007bff&auto_play=false"></iframe>`;
+      }
+      if (d.match(/^https?:\/\/.*\.mp3(\?.*)?$/i)) {
+        return `<audio controls src="${escapeHtmlAttr(d)}"></audio>`;
+      }
+      if (d.match(/^https?:\/\/.+/i)) {
+        return `<a href="${escapeHtmlAttr(d)}" target="_blank">${escapeHtml(
+          d
+        )}</a>`;
+      }
+      return escapeHtml(d);
+    }
+
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.trim().toLowerCase();
+      if (!query) {
+        renderTable(data);
+        return;
+      }
+      const filtered = data.filter((item) =>
+        Object.values(item).some((val) =>
+          val.toString().toLowerCase().includes(query)
+        )
+      );
+      renderTable(filtered);
+      highlightText(query);
+    });
+
+    function highlightText(term) {
+      if (!term) return;
+      const cells = tableBody.querySelectorAll('td .cell-text');
+      cells.forEach((cell) => {
+        const originalText = cell.textContent;
+        const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
+        const highlighted = escapeHtml(originalText).replace(
+          regex,
+          '<span class="highlight">$1</span>'
+        );
+        cell.innerHTML = highlighted;
+      });
+    }
+
+    function escapeHtml(text) {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;',
+      };
+      return text.replace(/[&<>"']/g, (m) => map[m]);
+    }
+
+    function escapeHtmlAttr(text) {
+      return text.replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    }
+
+    function escapeRegExp(string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+  </script>
+</body>
+</html>

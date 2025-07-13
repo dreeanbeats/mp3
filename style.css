@@ -1,0 +1,348 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f8ff;
+  margin: 20px;
+  color: #222;
+}
+h1, h2 {
+  text-align: center;
+  color: #004aad;
+}
+#loginBox {
+  max-width: 300px;
+  margin: 100px auto 0 auto;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 2px rgba(0, 74, 173, 0.7);
+  text-align: center;
+}
+#loginBox input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 2px solid #004aad;
+  border-radius: 6px;
+  outline: none;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+}
+#loginBox button {
+  background: #0070f3;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+#loginBox button:hover {
+  background-color: #005bb5;
+}
+#errorMsg {
+  color: red;
+  margin-top: 10px;
+}
+#adminPanel {
+  display: none;
+  max-width: 900px;
+  margin: 0 auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 0 10px 2px rgba(0, 74, 173, 0.7);
+  border-radius: 10px;
+  overflow: hidden;
+  background: white;
+}
+thead {
+  background: linear-gradient(90deg, #004aad, #0070f3);
+  color: white;
+  font-weight: 600;
+  text-align: left;
+}
+th, td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #ddd;
+  vertical-align: middle;
+}
+tbody tr:hover {
+  background-color: #e6f0ff;
+  transition: background-color 0.3s ease;
+}
+audio {
+  width: 150px;
+}
+.drag-highlight {
+  background-color: #d8fcd4 !important;
+  cursor: move;
+}
+.form-container {
+  margin: 30px 0;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.form-container input, .form-container select {
+  margin-bottom: 10px;
+  padding: 8px;
+  width: calc(100% - 20px);
+  border-radius: 6px;
+  border: 1px solid #aaa;
+  display: block;
+}
+.form-container button {
+  background: #0070f3;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+.form-container button:hover {
+  background: #005bb5;
+}
+.save-button {
+  background: #00c851;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 16px;
+  margin: 20px auto;
+  display: block;
+  cursor: pointer;
+}
+.save-button:hover {
+  background: #007e33;
+}
+
+#searchInput {
+  width: 100%;
+  max-width: 400px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  border: 2px solid #0070f3;
+  border-radius: 6px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+  margin-bottom: 15px;
+}
+
+#searchInput:focus {
+  border-color: #005bb5;
+  box-shadow: 0 0 6px #005bb5aa;
+}
+
+#searchInput {
+  display: block;
+  margin: 20px auto;
+  width: 90%;
+  max-width: 400px;
+  padding: 10px 15px;
+  font-size: 1.1rem;
+  border: 2px solid #0070f3;
+  border-radius: 8px;
+  outline: none;
+  box-sizing: border-box;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  background: #fff;
+  color: #222;
+
+  /* Alap glow */
+  box-shadow: 0 0 8px 0 #0070f3aa;
+
+  /* Lüktető animáció */
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 8px 0 #0070f3aa;
+    border-color: #0070f3;
+  }
+  50% {
+    box-shadow: 0 0 20px 6px #0070f3cc;
+    border-color: #005bb5;
+  }
+}
+
+/* Fókuszkor is legyen lüktetés, de intenzívebb */
+#searchInput:focus {
+  animation: pulseGlow 1.5s ease-in-out infinite;
+  border-color: #005bb5;
+  box-shadow: 0 0 25px 8px #005bb5ee;
+}
+
+/* Betűtípus Google Fonts-ról */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f9fafb;
+  color: #222;
+  margin: 20px;
+  min-height: 100vh;
+}
+
+/* Cím */
+h1 {
+  text-align: center;
+  font-weight: 600;
+  font-size: 2rem;
+  margin-bottom: 25px;
+  color: #0070f3;
+  letter-spacing: 1px;
+}
+
+/* Keresőmező */
+#searchInput {
+  display: block;
+  margin: 0 auto 25px auto;
+  width: 90%;
+  max-width: 420px;
+  padding: 12px 18px;
+  font-size: 1.15rem;
+  border-radius: 8px;
+  border: 2px solid #0070f3;
+  outline: none;
+  box-sizing: border-box;
+  background: white;
+  color: #222;
+
+  box-shadow: 0 0 8px 0 #0070f3aa;
+  animation: pulseGlow 2.5s ease-in-out infinite;
+  transition: box-shadow 0.3s ease;
+}
+
+#searchInput:focus {
+  animation-duration: 1.5s;
+  box-shadow: 0 0 22px 6px #005bb5cc;
+  border-color: #005bb5;
+}
+
+/* Lüktető kék glow animáció */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 8px 0 #0070f3aa;
+    border-color: #0070f3;
+  }
+  50% {
+    box-shadow: 0 0 20px 6px #0070f3cc;
+    border-color: #005bb5;
+  }
+}
+
+/* Táblázat alapok */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  box-shadow: 0 3px 12px rgb(0 0 0 / 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Fejléc */
+thead tr {
+  background: linear-gradient(90deg, #0070f3, #005bb5);
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+thead th {
+  padding: 14px 16px;
+  text-align: left;
+}
+
+/* Sorok */
+tbody tr {
+  background: white;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: default;
+  border-radius: 8px;
+}
+
+tbody tr:hover {
+  background-color: #e9f0ff;
+  box-shadow: 0 4px 14px rgb(0 112 243 / 0.25);
+}
+
+/* Cellák */
+td {
+  padding: 12px 16px;
+  vertical-align: middle;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+td.align-left {
+  text-align: left;
+}
+
+/* Demo iframe/audio megjelenítés */
+.demo-cell iframe,
+.demo-cell audio {
+  border-radius: 10px;
+  border: none;
+  width: 100%;
+  max-width: 400px;
+  height: 150px;
+  display: block;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.1);
+}
+
+/* Kiemelés (highlight) */
+.highlight {
+  background-color: #d6f5d6;
+  box-shadow: 0 0 8px 2px #4caf5080;
+  font-weight: 600;
+  border-radius: 3px;
+  transition: background-color 0.3s ease;
+}
+
+/* Mobilbarát táblázat: görgethető */
+@media (max-width: 600px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+  thead tr {
+    display: none; /* fejléc elrejtése */
+  }
+  tbody tr {
+    margin-bottom: 15px;
+    box-shadow: none;
+    background: #f3f7ff;
+    border-radius: 10px;
+    padding: 12px;
+  }
+  tbody td {
+    padding-left: 50%;
+    position: relative;
+    text-align: right;
+    font-size: 0.9rem;
+  }
+  tbody td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 16px;
+    width: 45%;
+    padding-left: 5px;
+    font-weight: 600;
+    text-align: left;
+    color: #0070f3;
+  }
+  .demo-cell iframe, .demo-cell audio {
+    max-width: 100%;
+    height: 120px;
+  }
+}

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dreean Beats - Admin</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .admin-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .admin-form input {
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      flex: 1 1 150px;
+    }
+    .admin-form button {
+      background-color: #0070f3;
+      border: none;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .admin-form button:hover {
+      background-color: #005bb5;
+    }
+    td[contenteditable="true"] {
+      background-color: #f0faff;
+      border: 1px dashed #0070f3;
+    }
+    #saveJsonBtn {
+      margin-top: 10px;
+    }
+    /* Törlés gomb stílus */
+    .delete-btn {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .delete-btn:hover {
+      background-color: #c0392b;
+    }
+    /* Drag & drop során megjelenő sor stílus */
+    .sortable-chosen {
+      background-color: #d0e7ff !important;
+    }
+    .sortable-ghost {
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+  <h1>Dreean Beats - Admin</h1>
+
+  <form class="admin-form" id="addForm">
+    <input type="text" id="title" placeholder="Cím" />
+    <input type="text" id="demo" placeholder="Demo (link vagy iframe)" />
+    <input type="text" id="length" placeholder="Hossz (pl. 3:20)" />
+    <input type="text" id="bpm" placeholder="BPM" />
+    <input type="text" id="key" placeholder="Key (pl. A minor)" />
+    <input type="text" id="genre" placeholder="Műfaj" />
+    <button type="submit">Hozzáadás</button>
+    <button type="button" id="saveJsonBtn">Mentés JSON-ba</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th class="align-left">Cím</th>
+        <th>Demo</th>
+        <th>Hossz</th>
+        <th>BPM</th>
+        <th>Key</th>
+        <th>Műfaj</th>
+        <th>Művelet</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <!-- SortableJS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+  <script>
+    const tableBody = document.getElementById('tableBody');
+    const addForm = document.getElementById('addForm');
+    const titleInput = document.getElementById('title');
+    const demoInput = document.getElementById('demo');
+    const lengthInput = document.getElementById('length');
+    const bpmInput = document.getElementById('bpm');
+    const keyInput = document.getElementById('key');
+    const genreInput = document.getElementById('genre');
+    const saveJsonBtn = document.getElementById('saveJsonBtn');
+
+    let data = [];
+
+    // Adatok betöltése data.json-ból (ha van)
+    fetch('data.json')
+      .then(res => res.json())
+      .then(json => {
+        data = json;
+        renderTable();
+        initSortable();
+      })
+      .catch(() => {
+        data = [];
+        renderTable();
+        initSortable();
+      });
+
+    function renderTable() {
+      tableBody.innerHTML = '';
+      data.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td contenteditable="true">${escapeHtml(item.title)}</td>
+          <td contenteditable="true">${escapeHtml(item.demo)}</td>
+          <td contenteditable="true">${escapeHtml(item.length)}</td>
+          <td contenteditable="true">${escapeHtml(item.bpm)}</td>
+          <td contenteditable="true">${escapeHtml(item.key)}</td>
+          <td contenteditable="true">${escapeHtml(item.genre)}</td>
+          <td><button class="delete-btn" onclick="torolSor(${index})">Törlés</button></td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    }
+
+    addForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const newItem = {
+        title: titleInput.value.trim(),
+        demo: demoInput.value.trim(),
+        length: lengthInput.value.trim(),
+        bpm: bpmInput.value.trim(),
+        key: keyInput.value.trim(),
+        genre: genreInput.value.trim()
+      };
+      data.push(newItem);
+      renderTable();
+      this.reset();
+      initSortable();
+    });
+
+    saveJsonBtn.addEventListener('click', () => {
+      // Frissítjük a data tömböt az aktuális táblázatból (contenteditable miatt)
+      const rows = tableBody.querySelectorAll('tr');
+      data = Array.from(rows).map(row => {
+        const cells = row.querySelectorAll('td');
+        return {
+          title: cells[0].innerText.trim(),
+          demo: cells[1].innerText.trim(),
+          length: cells[2].innerText.trim(),
+          bpm: cells[3].innerText.trim(),
+          key: cells[4].innerText.trim(),
+          genre: cells[5].innerText.trim()
+        };
+      });
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'data.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    function torolSor(index) {
+      data.splice(index, 1);
+      renderTable();
+      initSortable();
+    }
+
+    function escapeHtml(text) {
+      const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+      return text.replace(/[&<>"']/g, m => map[m]);
+    }
+
+    // Drag & Drop sorok átrendezéséhez
+    function initSortable() {
+      if (window.sortableInstance) {
+        window.sortableInstance.destroy();
+      }
+      window.sortableInstance = Sortable.create(tableBody, {
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        onEnd: () => {
+          // Frissíti a data tömböt a táblázat új sorrendje alapján
+          const rows = tableBody.querySelectorAll('tr');
+          data = Array.from(rows).map(row => {
+            const cells = row.querySelectorAll('td');
+            return {
+              title: cells[0].innerText.trim(),
+              demo: cells[1].innerText.trim(),
+              length: cells[2].innerText.trim(),
+              bpm: cells[3].innerText.trim(),
+              key: cells[4].innerText.trim(),
+              genre: cells[5].innerText.trim()
+            };
+          });
+        }
+      });
+    }
+  </script>
+</body>
+</html>
