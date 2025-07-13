@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Dreean Beats - Egyedi, minőségi MP3 alapok hiphop, trap és pop stílusban." />
+  <title>Dreean Beats</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Dreean Beats - Egyedi minőségi MP3 alapok</h1>
+
+  <label for="searchInput" class="visually-hidden">Keresés a zenék között</label>
+  <input type="text" id="searchInput" placeholder="Keresés..." autocomplete="off" />
+
+  <table>
+    <thead>
+      <tr>
+        <th class="align-left">Cím</th>
+        <th>Demo</th>
+        <th>Hossz</th>
+        <th>BPM</th>
+        <th>Key</th>
+        <th>Műfaj</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 Dreean Beats készítette</p>
+  </footer>
+
+  <button id="themeToggle" class="theme-toggle" title="Sötét mód váltása">🌙</button>
+
+  <script>
+    const tableBody = document.getElementById('tableBody');
+    const searchInput = document.getElementById('searchInput');
+    let data = [];
+
+    fetch('data.json')
+      .then((response) => response.json())
+      .then((json) => {
+        data = json;
+        renderTable(data);
+      })
+      .catch((err) => {
+        console.error('Nem sikerült betölteni:', err);
+        tableBody.innerHTML =
+          '<tr><td colspan="6" style="text-align:center;color:red;">Nem sikerült betölteni az adatokat.</td></tr>';
+      });
+
+    function renderTable(items) {
+      tableBody.innerHTML = '';
+      items.forEach((item) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="align-left" data-label="Cím"><span class="cell-text">${escapeHtml(item.title)}</span></td>
+          <td class="demo-cell" data-label="Demo">${renderDemo(item.demo)}</td>
+          <td data-label="Hossz"><span class="cell-text">${escapeHtml(item.length)}</span></td>
+          <td data-label="BPM"><span class="cell-text">${escapeHtml(item.bpm)}</span></td>
+          <td data-label="Key"><span class="cell-text">${escapeHtml(item.key)}</span></td>
+          <td data-label="Műfaj"><span class="cell-text">${escapeHtml(item.genre)}</span></td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    }
+
+    function renderDemo(demo) {
+      if (!demo) return '';
+      const d = demo.trim();
+      if (d.startsWith('<iframe') || d.startsWith('<embed')) return d;
+      if (d.match(/^https?:\/\/hearthis\.at\//i)) {
+        return `<iframe scrolling="no" width="100%" height="150" src="${escapeHtmlAttr(d)}" frameborder="0" allowtransparency allow="autoplay"></iframe>`;
+      }
+      if (d.match(/^https?:\/\/(soundcloud\.com|snd\.sc)\//i)) {
+        const encoded = encodeURIComponent(d);
+        return `<iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=${encoded}&color=%23007bff&auto_play=false"></iframe>`;
+      }
+      if (d.match(/^https?:\/\/.*\.mp3(\?.*)?$/i)) {
+        return `<audio controls src="${escapeHtmlAttr(d)}"></audio>`;
+      }
+      if (d.match(/^https?:\/\/.+/i)) {
+        return `<a href="${escapeHtmlAttr(d)}" target="_blank">${escapeHtml(d)}</a>`;
+      }
+      return escapeHtml(d);
+    }
+
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.trim().toLowerCase();
+      if (!query) {
+        renderTable(data);
+        return;
+      }
+      const filtered = data.filter((item) =>
+        Object.values(item).some((val) =>
+          val.toString().toLowerCase().includes(query)
+        )
+      );
+      renderTable(filtered);
+      highlightText(query);
+    });
+
+    function highlightText(term) {
+      if (!term) return;
+      const cells = tableBody.querySelectorAll('td .cell-text');
+      cells.forEach((cell) => {
+        const originalText = cell.textContent;
+        const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
+        const highlighted = escapeHtml(originalText).replace(
+          regex,
+          '<span class="highlight">$1</span>'
+        );
+        cell.innerHTML = highlighted;
+      });
+    }
+
+    function escapeHtml(text) {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;',
+      };
+      return text.replace(/[&<>"']/g, (m) => map[m]);
+    }
+
+    function escapeHtmlAttr(text) {
+      return text.replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    }
+
+    function escapeRegExp(string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    // Dark mode toggle
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+    });
+  </script>
+
+  <style>
+    .visually-hidden {
+      position: absolute;
+      left: -9999px;
+    }
+  </style>
+
+  <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6873ed4fe5777f190f9afe04/1j02ddvhc';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+
+</body>
+</html>
